@@ -8,7 +8,7 @@
 
 Перейти в env/Scripts/ и выбрать activate 
 
-Уствновить необходимые пакеты \
+Установить необходимые пакеты \
 `pip install -r requirements.txt` 
 
 Скачать проект с github \
