@@ -1,6 +1,8 @@
 from django.test import TestCase, Client
 from django.core.cache import cache
 from django.core.files.uploadedfile import SimpleUploadedFile
+import shutil
+from django.conf import settings
 
 from photo.models import Photo
 
@@ -16,8 +18,13 @@ class URLTests(TestCase):
             b'\x01\x0a\x00\x01\x00\x2c\x00\x00'
             b'\x00\x00\x01\x00\x01\x00\x00\x02'
             b'\x02\x4c\x01\x00\x3b')
-        cls.image_post = SimpleUploadedFile(name='small.gif', content=small_gif, content_type='image/gif')
-        Photo.objects.create(image=cls.image_post)
+        cls.image = SimpleUploadedFile(name='small.gif', content=small_gif, content_type='image/gif')
+        Photo.objects.create(image=cls.image)
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(settings.MEDIA_ROOT, ignore_errors=True)
+        super().tearDownClass()
 
     """Проверим доступность страниц"""
     def test_homepage(self):
