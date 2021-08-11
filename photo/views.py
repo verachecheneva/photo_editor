@@ -1,4 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
+import requests
+from django.core.files.temp import NamedTemporaryFile
+from django.core.files import File
+
 
 from .models import Photo
 from .forms import PhotoForm
@@ -22,6 +26,14 @@ def new_photo(request):
         form = PhotoForm(request.POST, request.FILES)
         if form.is_valid():
             photo = form.save(commit=False)
+            if photo.image_url and not photo.image:
+                r = requests.get(photo.image_url)
+
+                img_temp = NamedTemporaryFile()
+                img_temp.write(r.content)
+                img_temp.flush()
+
+                photo.image.save("image.jpg", File(img_temp), save=True)
             photo.save()
             photo_id = Photo.objects.latest('pub_date').id
             return redirect(photo_page, photo_id)
