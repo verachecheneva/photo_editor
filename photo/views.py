@@ -2,8 +2,6 @@ from django.shortcuts import render, get_object_or_404, redirect
 import requests
 from django.core.files.temp import NamedTemporaryFile
 from django.core.files import File
-from PIL import Image
-from io import BytesIO
 
 
 from .models import Photo
@@ -25,11 +23,10 @@ def photo_page(request, photo_id):
         if form.is_valid():
             width = form.cleaned_data.get('width')
             height = form.cleaned_data.get('height')
-            im = Image.open(photo.image)
-            im = im.resize((int(width), int(height)))
+            photo.resize_photo(width, height)
+            im = True
             return render(request, 'photo_page.html', {'photo': photo, 'change_form': form, 'im': im})
 
-            # return redirect(photo_page, photo_id)
     form = ChangeImageForm()
     return render(request, 'photo_page.html', {'photo': photo, 'change_form': form})
 

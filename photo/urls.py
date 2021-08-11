@@ -1,7 +1,7 @@
 from django.urls import path
 
-
 from .views import index, new_photo, photo_page
+
 
 urlpatterns = [
     path('', index, name='index'),
