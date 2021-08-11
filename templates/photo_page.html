@@ -5,8 +5,20 @@
     <title>Страница фотографии</title>
 </head>
 <body>
-<p><a href="/">Назад к списку</a></p>
-<p>надо сделать эту страницу</p>
-<img src="{{ photo.image.url }}" />
+    <p><a href="/">Назад к списку</a></p>
+    <h1>{{ photo.image.name }}</h1>
+    <form method="POST", enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ change_form.as_p }}
+
+        <div>
+            <button type="submit">Отправить</button>
+        </div>
+    </form>
+    {% if im %}
+        <img src="{{ im }}" />
+    {% else%}
+        <img src="{{ photo.image.url }}" />
+    {% endif %}
 </body>
 </html>

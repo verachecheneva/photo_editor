@@ -2,10 +2,12 @@ from django.shortcuts import render, get_object_or_404, redirect
 import requests
 from django.core.files.temp import NamedTemporaryFile
 from django.core.files import File
+from PIL import Image
+from io import BytesIO
 
 
 from .models import Photo
-from .forms import PhotoForm
+from .forms import PhotoForm, ChangeImageForm
 
 
 def index(request):
@@ -18,7 +20,18 @@ def index(request):
 
 def photo_page(request, photo_id):
     photo = get_object_or_404(Photo, id=photo_id)
-    return render(request, 'photo_page.html', {'photo': photo})
+    if request.method == 'POST':
+        form = ChangeImageForm(request.POST)
+        if form.is_valid():
+            width = form.cleaned_data.get('width')
+            height = form.cleaned_data.get('height')
+            im = Image.open(photo.image)
+            im = im.resize((int(width), int(height)))
+            return render(request, 'photo_page.html', {'photo': photo, 'change_form': form, 'im': im})
+
+            # return redirect(photo_page, photo_id)
+    form = ChangeImageForm()
+    return render(request, 'photo_page.html', {'photo': photo, 'change_form': form})
 
 
 def new_photo(request):
